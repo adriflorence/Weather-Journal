@@ -1,8 +1,18 @@
-// Global Variables
-
+// OpenWeatherApi config
 const baseURL = 'api.openweathermap.org/data/2.5/weather?zip='; // zip search
 const zip = 'G117BE' + ',uk';
 const apiKey = '&appid=' + '555036a2bb84497ab0064c6bd52df011'; // TODO pull in from non-vc file
+
+// Get values from HTML elements
+const zip = document.getElementById('zip').value;
+const feel = document.getElementById('feelings').value;
+
+// Button to listen to click events
+const generate = document.getElementById('generate');
+
+// Create a new date instance dynamically with JS
+let d = new Date();
+let newDate = d.getMonth() + '.' + d.getDate() + '.' + d.getFullYear();
 
 function performAction(){
     fetchWeatherData(baseURL, zip, apiKey)
@@ -28,19 +38,25 @@ const fetchWeatherData = async (baseURL, zip, apiKey) => {
 const postData = async ( url = '', data = {}) => {
     const response = await fetch(url, {
         method: 'POST', 
-        credentials: 'same-origin',
         headers: {
             'Content-Type': 'application/json',
         },
-        // Body data type must match "Content-Type" header        
         body: JSON.stringify(data), 
     });
 
     try {
         const newData = await response.json();
-        console.log(newData);
         return newData;
     } catch(error) {
         console.log("error", error);
-        }
+        throw error;
+    }
 }
+
+// Event Listener
+generate.addEventListener('click', () => {
+    fetchWeatherData(baseURL, zip, apiKey)
+        .then(temp => {
+            return {date: newDate, temp, content: feel}
+        })
+})
