@@ -1,5 +1,5 @@
 // OpenWeatherApi config
-const baseURL = 'api.openweathermap.org/data/2.5/weather?zip='; // zip search
+const baseURL = 'https://api.openweathermap.org/data/2.5/weather?zip='; // zip search
 const apiKey = '&appid=' + '555036a2bb84497ab0064c6bd52df011'; // TODO pull in from non-vc file
 
 // Get values from HTML elements
@@ -11,7 +11,7 @@ const generate = document.getElementById('generate');
 
 // Create a new date instance dynamically with JS
 let d = new Date();
-let newDate = d.getMonth() + '.' + d.getDate() + '.' + d.getFullYear();
+let newDate = d.getDate() + '/' + d.getMonth() + '/' + d.getFullYear();
 
 function performAction(){
     fetchWeatherData(baseURL, zip, apiKey)
@@ -25,7 +25,7 @@ const fetchWeatherData = async (baseURL, zip, apiKey) => {
         const data = await request.json();
         // destructuring of result
         const {
-            main: {temp},
+            main: { temp },
         } = data;
         return temp
     } catch (e) {
@@ -55,13 +55,17 @@ const postData = async ( url = '', data = {}) => {
 // Update UI dynamically
 const updateUI = async (temperature, newDate, feelings) => {
     date.innerText = newDate;
-    temp.innerText = `${temperature} deg`;
+    temp.innerText = `${convertKelvinToCelsius(temperature)} °C`; // Temperature in Kelvin is used by default
     content.innerText = feelings;
+}
+
+function convertKelvinToCelsius(kelvin){
+    return Math.floor(kelvin - 273);
 }
 
 // Event Listener
 generate.addEventListener('click', () => {
-    let zip_country = zip.value + ',us';
+    let zip_country = zip.value + ',us'; // Note: seach does not seem to work with UK postcodes
     fetchWeatherData(baseURL, zip_country, apiKey)
         .then(temp => {
             return {date: newDate, temp, content: feelings.value}
@@ -70,6 +74,7 @@ generate.addEventListener('click', () => {
             postData('/entry', data);
             return data;
         })
+        // Promise that updates the UI dynamically
         .then(({temp, date, content}) => 
             updateUI(temp, date, content)
         )
