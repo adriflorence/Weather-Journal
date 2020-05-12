@@ -33,19 +33,18 @@ function listening(){
 
 // HTTP ROUTES
 
-// Get
+// GET
 app.get('/entry', function (req, res) {
     res.status(200).send(projectData);
 });
 
-// Post
-app.post('/entry', addAnswer);
-function addAnswer (req, res) {
-    let { date, temp, content } = req.body
+// POST
+app.post('/entry', (req, res) => {
+    const { date, temp, content } = req.body
     // manually set the string for the key of the new JS object entry
     projectData[date] = {
         temp,
         content
     }
-    res.send();
-};
+    res.status(201).send();
+});

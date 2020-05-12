@@ -1,12 +1,10 @@
 // OpenWeatherApi config
 const baseURL = 'https://api.openweathermap.org/data/2.5/weather?zip='; // zip search
-const apiKey = '&appid=' + '555036a2bb84497ab0064c6bd52df011'; // TODO pull in from non-vc file
+const apiKey = '555036a2bb84497ab0064c6bd52df011'; // TODO pull in from non-vc file
 
-// Get values from HTML elements
-let zip = document.getElementById('zip');
+// HTML elements
+const zip = document.getElementById('zip');
 const feelings = document.getElementById('feelings');
-
-// Button to listen to click events
 const generate = document.getElementById('generate');
 
 // Create a new date instance dynamically with JS
@@ -19,7 +17,7 @@ function performAction(){
 
 // Fetch Weather Data from OpenWeatherApi
 const fetchWeatherData = async (baseURL, zip, apiKey) => {
-    const url = baseURL + zip + apiKey;
+    const url = baseURL + zip + '&appid=' + apiKey;
     try {
         const request = await fetch(url);
         const data = await request.json();
@@ -34,7 +32,7 @@ const fetchWeatherData = async (baseURL, zip, apiKey) => {
     }
 }
 
-const postData = async ( url = '', data = {}) => {
+const postData = async (url,data) => {
     const response = await fetch(url, {
         method: 'POST', 
         headers: {
