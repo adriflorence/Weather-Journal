@@ -1,11 +1,10 @@
 // OpenWeatherApi config
 const baseURL = 'api.openweathermap.org/data/2.5/weather?zip='; // zip search
-const zip = 'G117BE' + ',uk';
 const apiKey = '&appid=' + '555036a2bb84497ab0064c6bd52df011'; // TODO pull in from non-vc file
 
 // Get values from HTML elements
-const zip = document.getElementById('zip').value;
-const feel = document.getElementById('feelings').value;
+let zip = document.getElementById('zip');
+const feelings = document.getElementById('feelings');
 
 // Button to listen to click events
 const generate = document.getElementById('generate');
@@ -53,10 +52,28 @@ const postData = async ( url = '', data = {}) => {
     }
 }
 
+// Update UI dynamically
+const updateUI = async (temperature, newDate, feelings) => {
+    date.innerText = newDate;
+    temp.innerText = `${temperature} deg`;
+    content.innerText = feelings;
+}
+
 // Event Listener
 generate.addEventListener('click', () => {
-    fetchWeatherData(baseURL, zip, apiKey)
+    let zip_country = zip.value + ',us';
+    fetchWeatherData(baseURL, zip_country, apiKey)
         .then(temp => {
-            return {date: newDate, temp, content: feel}
+            return {date: newDate, temp, content: feelings.value}
+        })
+        .then(data => {
+            postData('/entry', data);
+            return data;
+        })
+        .then(({temp, date, content}) => 
+            updateUI(temp, date, content)
+        )
+        .catch(e => {
+            console.error(e);
         })
 })

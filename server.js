@@ -4,19 +4,19 @@ projectData = {};
 // Require Express to run server and routes
 const express = require('express');
 
-// Start up an instance of app
-const app = express();
-
 // Dependencies
 const bodyParser = require('body-parser');
+const fetch = require('node-fetch');
+const cors = require('cors'); // cross origin allowance
+
+// Start up an instance of app
+const app = express();
 
 // Middleware
 // Configuring express to use body-parser as middleware
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-// Cors for cross origin allowance
-const cors = require('cors');
 app.use(cors());
 
 // Initialize the main project folder
@@ -31,20 +31,21 @@ function listening(){
     console.log(`server running on localhost: ${port}`);
 }
 
-// HTTP REQUESTS
+// HTTP ROUTES
 
 // Get
-app.get('/', function (req, res) {
-    res.send(projectData);
+app.get('/entry', function (req, res) {
+    res.status(200).send(projectData);
 });
 
 // Post
-app.post('/addAnswer', addAnswer);
+app.post('/entry', addAnswer);
 function addAnswer (req, res) {
-    let data = req.body
+    let { date, temp, content } = req.body
     // manually set the string for the key of the new JS object entry
-    projectData['temperature'] = data.temperature;
-    projectData['date'] = data.date;
-    projectData['user_response'] = data.user_response;
-    console.log(projectData);
+    projectData[date] = {
+        temp,
+        content
+    }
+    res.send();
 };
